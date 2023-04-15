@@ -1,0 +1,19 @@
+{
+  "name": "erp_frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.php",
+  "scripts": {
+    "sass": "sass --watch ./assets/sass/main.scss:./assets/css/main.css",
+    "prefix": "postcss ./assets/css/main.css --use autoprefixer -d ./assets/css/prefixed/"
+  },
+  "author": "",
+  "license": "ISC",
+  "browserslist": "last 4 versions",
+  "dependencies": {
+    "update-browserslist-db": "^1.0.10"
+  },
+  "devDependencies": {
+    "eslint": "^8.35.0"
+  }
+}
