@@ -1,0 +1,297 @@
+nav, .header {
+	display: none;
+}
+
+body {
+	background: transparent;
+	margin: 0;
+	padding: 0;
+	vertical-align: baseline;
+	color: black;
+	font-family: serif;
+	font-size: 10pt;
+	font-weight: 400;
+}
+
+.section--text {
+	padding: 20px;
+	font-size: 10pt;
+	text-align: center;
+}
+
+.WSHeader, .WSBody, .WSFooter {
+	width: 100%;
+	margin: 0.75em auto;
+}
+
+.matHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: solid 1px black;
+}
+
+.matHeader > div {
+	padding: 0.75em;
+}
+
+h2 {
+	transform: scale(1);
+	display: inline-block;
+	font-size: 1.75em;
+	padding: 0.35em 1em;
+	color: black;
+	font-weight: 800;
+	letter-spacing: 0.035em;
+	margin: 1em auto 1em auto;
+	text-transform: uppercase;
+	position: relative;
+	z-index: 1;
+}
+
+.matHeader > .versionInfo {
+	width: 10%;
+}
+
+.matInfo > div {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.matInfo > div > .matInfo--ref, .matInfo > div > .matInfo--lot {
+	width: 35%;
+	text-align: left;
+}
+
+.matInfo > div > .matInfo--name, .matInfo > div > .matInfo--density {
+	width: 65%;
+	text-align: right;
+	border-left: none;
+}
+
+.matInfo > div > span {
+	padding: 0.75em;
+	border: solid 1px black;
+	border-top: none;
+}
+
+.WStest {
+	margin: 1em 0;
+	font-size: 0.75em;
+}
+
+.pseudoHeader {
+	border: solid 1px black;
+	font-weight: bold;
+	background-color: #ced8e2;
+	color: black;
+}
+
+.WStest--header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.75em;
+}
+
+.WStest--numbers {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.75em;
+	border: solid 1px black;
+	border-top: none;
+}
+
+.WStest--calculTable {
+	width: 50%;
+	padding: 0.75em;
+}
+
+.WStest--calculTable > div {
+	display: flex;
+	font-size: 0.75em;
+	border: solid 1px black;
+	border-top: none;
+}
+
+.WStest--calculTable > div:first-child {
+	display: block;
+	font-size: 1em;
+	border-top: solid 1px black;
+}
+
+.WStest--calculTable > div:nth-child(2) {
+	font-size: 1.13em;
+	display: flex;
+	justify-content: center;
+	padding: 0 0.75em;
+	border: solid 1px black;
+	border-top: none;
+}
+
+.WStest--calculTable > div > div:first-child {
+	padding: 0 0.75em;
+	border-right: solid 1px black;
+	text-align: left;
+	flex-grow: 1;
+}
+
+.WStest--calculTable > div > div:nth-child(2) {
+	width: 20%;
+}
+
+.WStest--calculTable > div > div:nth-child(2) input {
+	font-size: 1em;
+	height: 4pt;
+	text-align: center;
+	border: none;
+	width: 90%;
+}
+
+.WStest--Limits > div:nth-child(2) {
+	padding: 0 0.75em;
+	border: solid 1px black;
+	border-top: none;
+}
+
+.WStest--SOP {
+	display: flex;
+	justify-content: space-between;
+	align-items: stretch;
+}
+
+.WStest--SOPtext {
+	text-align: left;
+	padding: 0.75em;
+	border: solid 1px black;
+	border-top: none;
+	flex-grow: 1;
+}
+
+.WStest--reagent {
+	padding: 0.75em;
+	border: solid 1px black;
+	border-top: none;
+	border-left: none;
+}
+
+.solution {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.RM, .Reagent, .Indicator, .standard, .Scale {
+	font-weight: bold;
+	padding: 0 0.75em;
+}
+
+.RM {
+	color: black;
+}
+
+.Reagent {
+	color: red;
+}
+
+.Indicator {
+	color: green;
+}
+
+.Standard {
+	color: #00c1ff;
+}
+
+.Scale {
+	color: orange;
+}
+
+.WStest--calcTable {
+	border: solid 1px black;
+	border-top: none;
+	padding: 0.75em;
+}
+
+.calcTable {
+	max-width: 25%;
+	margin: 0.75em auto 0.75em 0.75em;
+	border: solid 1px black;
+}
+
+
+.calcTable td {
+	width: 20%;
+}
+
+.tableFirstCol {
+	width: 15%;
+}
+
+table {
+	margin: 0.75em 0 2em 0;
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+table th {
+	position: sticky;
+	top: 0;
+	color: black;
+	background-color: #ced8e2;
+}
+
+table th, table td {
+	vertical-align: middle;
+	text-align: center;
+	font-size: 0.75em;
+	border: solid 1px black;
+}
+
+.calcTable input {
+	font-size: 1.13em;
+	text-align: center;
+	border: none;
+	height: 4pt;
+}
+
+.cellOK {
+	background-color: green;
+	color: white;
+}
+
+.cellnotOK {
+	background-color: red;
+	color: white;
+}
+
+.ResultOK {
+	font-weight: bold;
+	color: green;
+}
+
+.ResultnotOK {
+	font-weight: bold;
+	color: red;
+}
+
+.WStest--Result {
+	border: solid 1px black;
+	border-top: none;
+}
+
+.WSFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: solid 1px black;
+}
+
+.WSFooter > span {
+	width: 33%;
+	padding: 0.75em;
+}
+
+.WStest{
+	page-break-inside:avoid;
+}

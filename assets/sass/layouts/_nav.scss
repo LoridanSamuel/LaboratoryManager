@@ -1,0 +1,138 @@
+nav {
+	position:absolute;
+	top:70px;
+	left:0;
+	width:100%;
+	z-index:-1;
+
+	transition: all 0.5s ease-in-out;
+
+	ul {
+		list-style-type:none;
+		margin:0;
+		padding:0;
+		text-align:center;
+
+		li {
+			display:inline-block;
+		}
+
+		@for $i from 1 through 4 {
+			li:nth-child(#{$i})>.nav--btn {
+				$d:calc($i/10);
+				transition: all 0.2s cubic-bezier(0.5,1,0.5,1.5) #{$d}s;
+			}
+		}
+
+		.nav--btn {
+			position: relative;
+			transform: translateY(-150px);
+      display: block;
+		}
+	}
+}
+
+.nav__move {
+	z-index:10;
+
+	.nav--btn {
+		transform: translateY(0px);
+	}
+}
+
+.nav--Toggle {
+	border:none;
+	outline:none;
+	background-color:transparent;
+	cursor:pointer;
+	margin:30px;
+}
+
+input#nav--Toggle[type="checkbox"] {
+	position: absolute;
+	opacity: 0.001;
+}
+
+.nav--ToggleLabel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--navigator-size);
+  height: var(--navigator-size);
+  cursor: pointer;
+
+	circle {
+		width: 100%;
+		height: 100%;
+		fill: none;
+		stroke: var(--color-Navigator);
+		stroke-width: calc(var(--navigator-weight) * 0.6); 
+		stroke-dasharray: 284;
+		stroke-dashoffset: 284;
+		stroke-linecap: round;
+		transition: 0.4s ease;
+	}
+
+	.hamburger {
+		position: absolute;
+		display: grid;
+		place-items: center;
+		width: 63%;
+		height: 63%;
+
+		.center {
+			right: 0;
+			transition: var(--navigator-bounce), width var(--navigator-ease);
+			transition-delay: 0.3s;
+		}
+
+		&::before {
+			top: 0;
+			transform: translate(var(--tx), 100%) rotate(var(--rt));
+		}
+
+		&::after {
+			bottom: 0;
+			transform: translate(var(--tx), -100%) rotate(var(--rt));
+		}
+	}
+
+	.hamburger::before, .hamburger .center, .hamburger::after {
+		--tx: 0;
+		--rt: 0deg;
+		content: "";
+		position: absolute;
+		width: 100%;
+		height: var(--navigator-weight);
+		border-radius: 0.3em;
+		background: var(--color-Navigator);
+		transform-origin: right;
+		transition: var(--navigator-bounce) 0.1s;
+	}
+}
+
+
+#nav--Toggle:checked ~ label circle {
+  stroke-dashoffset: 0;
+  transition-delay: 0.1s;
+}
+#nav--Toggle:checked ~ label .hamburger::before, #nav--Toggle:checked ~ label .hamburger::after {
+  --tx: -15%;
+  --rt: 45deg;
+  transition: var(--navigator-bounce) 0.1s;
+}
+#nav--Toggle:checked ~ label .hamburger::before {
+  --ty: 15%;
+  --rt: -45deg;
+}
+#nav--Toggle:checked ~ label .hamburger .center {
+  width: 0;
+  right: calc(var(--navigator-size) * -0.16);
+  transition: width var(--navigator-ease), right var(--navigator-bounce);
+}
+
+// input#nav--Toggle[type="checkbox"] + label:before {
+// 	display: none;
+// }
+
+

@@ -1,0 +1,72 @@
+.oModal {
+  transition: opacity 0.4s ease-in-out;
+  position: fixed;
+  z-index: 99999;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0,0,0,0.5);
+  overflow: auto;
+
+  &:target {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:target > div {
+    transition: all 0.4s ease-in-out;
+    margin: 5% auto;
+  }
+  
+  & > div {
+    transition: all 0.4s ease-in-out;
+    max-width: 400px;
+    position: relative;
+    margin: 5% auto;
+    padding: 1em;
+    border: 20px solid rgba(144,144,144,0.5);
+    border-radius: 10px;
+    background: var(--color-Page);
+    box-shadow: 0 0 20px var(--color-Text);
+
+    header {
+      border-bottom: 1px solid var(--color-Text);
+      display: flex;
+    }
+
+    header {
+      // display: flex;
+      justify-content: space-around;
+    }
+
+    footer > form > div {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    footer > div {
+      text-align: center;
+    }
+
+    h2 {
+      margin: auto;
+      font-size: 20px;
+    }
+
+    section, > header, > footer {
+      padding: 10px;
+      max-height: 100%;
+    }
+  }
+
+  .modal_buttons {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .reagentAlert {
+    color: var(--color-Alert);
+    font-weight: bold;
+  }
+}

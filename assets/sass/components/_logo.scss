@@ -1,0 +1,28 @@
+#logo {
+  text-align: center;
+}
+
+.icone {
+  position: relative;
+  margin-top: 5%;
+  padding: 1em;
+  background: #fff;
+}
+
+.logodraw {
+  stroke-dasharray: 560px;
+  stroke-dashoffset: 560px;
+  animation : anim 3s ease forwards;
+}
+
+.letter {
+  stroke-dasharray: 60px;
+  stroke-dashoffset: 60px;
+  animation : anim 3s ease forwards;
+}
+
+@keyframes anim {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

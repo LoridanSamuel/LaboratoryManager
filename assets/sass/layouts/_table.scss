@@ -1,0 +1,238 @@
+table {
+  margin: 0.75em 0 2em 0;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  tbody {
+    tr {
+      border: solid 1px var(--color-Text);
+      border-left: 0;
+      border-right: 0;
+    }
+  }
+
+  th, td {
+    vertical-align: middle;
+    text-align: center;
+    font-size: 0.75em;
+    border: solid 1px var(--color-Text);
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    color:var(--color-Black);
+    background-color: var(--color-TableHeader);
+  }
+
+  // thead {
+  //   border-bottom: solid 2px var(--color-Text);
+  // }
+
+  // tfoot {
+  //   border-top: solid 2px var(--color-Text);
+  // }
+
+  .table_button {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+//template for the worksheet
+
+.ResultOK {
+  color: var(--color-OK);
+  font-weight: bold;
+}
+
+.ResultnotOK {
+  color: var(--color-Alert);
+  font-weight: bold;
+}
+
+.cellOK {
+  background-color: var(--color-OK);
+}
+
+.cellnotOK {
+  background-color: var(--color-Alert);
+}
+
+.WStestName {
+  text-align: left;
+  font-weight: bold;
+  border: solid 1px var(--color-Text);
+  border-right: 0;
+  padding: 0.75em;
+}
+
+.WStestMethod {
+  text-align: right;
+  font-weight: bold;
+  border: solid 1px var(--color-Text);
+  border-left: 0;
+  padding: 0.75em;
+}
+
+.WStestSOP {
+  text-align: left;
+  padding: 0.75em;
+}
+
+.RM {
+  color: var(--color-Text);
+  font-weight: bold;
+  padding: 0 0.75em;
+}
+
+.Reagent {
+  color: var(--color-reag);
+  font-weight: bold;
+  padding: 0 0.75em;
+}
+
+.Indicator {
+  color: var(--color-ind);
+  font-weight: bold;
+  padding: 0 0.75em;
+}
+
+.Standard {
+  color: var(--color-std);
+  font-weight: bold;
+  padding: 0 0.75em;
+}
+
+.Scale {
+  color: var(--color-sc);
+  font-weight: bold;
+  padding: 0 0.75em;
+}
+
+.solution {
+  display: flex;
+  justify-content: flex-end;
+  > div {
+    padding: 0 0.5em;
+  }
+}
+
+#resultSentence {
+  text-align: left;
+}
+
+.WStestLimits, .WStestLimitswithCalcul {
+  vertical-align: top;
+  padding: 0 0.75em;
+  > table {
+    width: 150px;
+    margin: 0.75em 0 2em auto;
+  }
+}
+
+.WStestLimitswithCalcul {
+  border-left: 0;
+}
+
+.WScalculTemplate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: solid 1px var(--color-Text);
+}
+
+.WStestFormula {
+  border-right: 0;
+  padding: 0 0.75em;
+  > table {
+    width: 55%;
+    td {
+      padding: 0 0.75em;
+      text-align: left;
+    }
+  }
+}
+
+.WSoperandeValue {
+  width: 20%;
+}
+
+.WSunknownFromTest {
+  padding: 0.75em;
+}
+
+.WScalcSumup {
+  margin: 0.75em auto 2em 0.75em;
+  max-width: 40%;
+}
+
+.WSresultCalc {
+  max-width: 40%;
+}
+
+.WSop {
+  width: 8px;
+  padding: 0.75em;
+}
+
+.WSunknownFromTest {
+  display: flex;
+}
+
+.WSunknownCalc {
+  width: 10%;
+  font-size: 0.75em;
+}
+
+.WSunknownValue, .WSoperandeEdit {
+  height: 21px;
+  font-size: 1em;
+  text-align: center;
+}
+
+.WSoperandeType {
+  padding: 0.75em;
+  border-top: solid 1px var(--color-Text);
+}
+
+.WSoperandeDescription {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  > label {
+    padding: 0 0.75em;
+  }
+  .WSopeName {
+    width: 10%;
+  }
+  .WSopeDesc {
+    width: 40%;
+  }
+  .WSopeValue {
+    width: 15%;
+  }
+}
+
+.WSoperande {
+  padding: 0.75em;
+  border-bottom: solid 1px var(--color-Text);
+
+}
+
+.tableFirstCol {
+  width: 15%;
+}
+
+.calcTable {
+  max-width: 25%;
+  margin: 0.75em auto 0.75em 0.75em;
+  td {
+    width: 20%;
+  }
+  input {
+    font-size: 1.13em;
+    text-align: center;
+  }
+}

@@ -1,0 +1,193 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-Background);
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+  color: var(--color-Text);
+  font-family: var(--fontFamily);
+  font-size: var(--fontSize);
+  font-weight: var(--fontWeight);
+  letter-spacing: var(--letterSpacing);
+  line-height: var(--lineHeight);
+}
+
+// .section {
+//   .more {
+//     transform: translateY(8.5em);
+//     // opacity: 0;
+//   }
+//   &:after {
+//     opacity: 1;
+//   }
+// }
+
+main {
+  background: var(--color-Background);
+	position:absolute;
+	width:100%;
+	height:100%;
+	perspective: 500px;
+	perspective-origin: 50% 50%;
+}
+
+a {
+  // transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  border-bottom: none;
+  color: inherit;
+  text-decoration: none;
+}
+
+h2 {
+  transform: scale(1);
+  display: inline-block;
+  font-size: 1.75em;
+  padding: 0.35em 1em;
+  color: var(--color-Text);
+  font-weight: calc(var(--fontWeight) * 2);
+  letter-spacing: calc(var(--letterSpacing) / 2);
+  margin: 1em auto 1em auto;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  &:before {
+    top: 0;
+    left: 0;
+  }
+  &:after {
+    bottom: 0;
+    right: 0;
+  }
+  &:before, &:after {
+    width: 100%;
+    background: var(--color-Text);
+    content: "";
+    display: block;
+    height: 2px;
+    position: absolute;
+
+  }
+}
+
+input[type=text], input[type=password], input[type=email], select {
+  height: 2.75em;
+}
+
+input[type=text], input[type=password], input[type=email], select, textarea {
+  appearance: none;
+  background-color: var(--color-FormBG);
+  border-radius: 3px;
+  border: none;
+  color: inherit;
+  display: block;
+  outline: 0;
+  padding: 0 1em;
+  text-decoration: none;
+  width: 100%;
+  &:invalid {
+    box-shadow: none;
+  }
+  &:focus {
+    box-shadow: 0 0 0 2px var(--color-Highlighted);
+  }
+}
+
+textarea {
+  padding: 0.75em 1em;
+}
+
+input[type=date] {
+  color: var(--color-Text);
+  background: var(--color-FormBG);
+  font-size: 1em;
+}
+
+select {
+  background-size: 1.25em;
+  background-repeat: no-repeat;
+  background-position: calc(100% - 1em) center;
+  height: 2.75em;
+  padding-right: 2.75em;
+  text-overflow: ellipsis;
+
+  &:focus {
+    &::-ms-value {
+      background-color: transparent;
+    }
+  }
+
+  &::-ms-expand {
+    display: none;
+  }
+
+  option {
+    background-color: var(--color-Page);
+  }
+}
+
+.alert {
+  color: var(--color-Alert);
+  text-align: center;
+}
+
+.remark {
+  color: var(--color-Remark);
+  text-align: center;
+}
+
+.RM_number {
+  font-weight: bold;
+  color : var(--color-Text);
+}
+
+.reag_number {
+  font-weight: bold;
+  color: var(--color-reag);
+}
+
+.ind_number {
+  font-weight: bold;
+  color: var(--color-ind);
+}
+
+.std_number {
+  font-weight: bold;
+  color: var(--color-std);
+}
+
+.sc_number {
+  font-weight: bold;
+  color: var(--color-sc);
+}
+
+.status_OK {
+  font-weight: bold;
+  color: var(--color-OK);
+}
+
+.status_destroy {
+  font-weight: bold;
+}
+
+.status_notOpen {
+  font-weight: bold;
+  color: var(--color-notOpen);
+}
+
+.status_Perempted {
+  font-weight: bold;
+  color: var(--color-perempted);
+}
+
+.noDisplay {
+  display: none;
+}
+
+
+
+
+
+
