@@ -1,0 +1,492 @@
+.btn {
+  padding: 0.5em 1em;
+  margin: 0.75em;
+}
+
+.table--btn {
+  padding: 0 0.5em;
+}
+
+.btn, .table--btn {
+  background: var(--color-Button);
+  color: var(--color-Text);
+  border: none;
+  border-radius: var(--button-radius);
+  font-family: var(--fontFamily);
+  line-height: var(--lineHeight);
+  font-size: var(--button-fontSize);
+  font-weight: var(--button-fontWeight);
+  letter-spacing: var(--button-letterSpacing);
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  box-shadow: inset -0.05rem -0.05rem 0.08rem rgba($darkShadow,0.6),
+              inset 0.05rem 0.05rem 0.1rem rgba($lightShadow,1),
+              0.5rem 0.5rem 2rem rgba($darkShadow,0.5),
+              0.1rem 0.1rem 0.2rem rgba($darkShadow,0.75);
+  &:hover {
+    background: var(--color-Highlighted);
+    box-shadow: -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+              0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+              inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+              inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+              inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+  }
+}
+
+a.btn {
+  appearance: button;
+
+  text-decoration: none;
+  // color: initial;
+}
+
+.nav--btn {
+  padding: 0.5em 1em;
+  margin: 0.5em;
+  background: var(--color-Background);
+  color: var(--color-Light);
+  border: none;
+  border-radius: var(--button-radius);
+  font-size: var(--button-fontSize);
+  font-weight: var(--button-fontWeight);
+  letter-spacing: var(--button-letterSpacing);
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  box-shadow: inset -0.05rem -0.05rem 0.08rem rgba($darkShadow,0.6),
+              inset 0.05rem 0.05rem 0.1rem rgba($lightShadow,1),
+              0.5rem 0.5rem 2rem rgba($darkShadow,0.5),
+              0.1rem 0.1rem 0.2rem rgba($darkShadow,0.75);
+  &:hover {
+    background: var(--color-Highlighted);
+    box-shadow: -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+                0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+                inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+                inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+                inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+  }
+}
+
+.dark--Toggle {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  width: 3.0625rem;
+  user-select: none;
+}
+
+
+input#dark--Toggle[type="checkbox"] {
+  display: none;
+}
+
+.dark--Label {
+  display: block;
+  width: 3.0625rem;
+  height: 1.375rem;
+  border: none;
+  border-radius: 3rem;
+  background: $mid;
+  filter: blur(0.4px);
+  box-shadow: -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+              0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+              inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+              inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+              inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+  cursor: pointer;
+  overflow: hidden;
+  .face {
+    display: block;
+    position: absolute;
+    content: '';
+    top: 0.1125rem;
+    bottom: 0;
+    right: 1.8125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+    border: none;
+    border-radius: 3rem;
+    background: linear-gradient(45deg, #dedede 0%, #fff 70%);
+    transition: all 0.45s ease-in-out;
+    overflow: hidden;
+  }
+}
+
+input#dark--Toggle[type="checkbox"] {
+  + .dark--Label #dark--Background {
+    width: inherit;
+    height: inherit;
+    border: none;
+    border-radius: inherit;
+    background: var(--color-Highlighted);
+    box-shadow: -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+              0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+              inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+              inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+              inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+    opacity: 0;
+    transition: all 0.45s ease-in-out;
+  }
+  &:checked + .dark--Label #dark--Background {
+    opacity: 1;
+  }
+}
+
+.face-container {
+  position: absolute;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.face {
+  box-shadow: 0 0.075rem 0.075rem 0 rgba(0, 0, 0, 0.25);
+}
+
+.eye {
+  position: absolute;
+  top: 0.5625rem;
+  height: 0.0625rem;
+  width: 0.15625rem;
+  background: #8e8e8e;
+  border-radius: 0 0 100% 50%;
+  &.left {
+    left: 0.1875rem;
+  }
+  &.right {
+    left: 0.53125rem;
+  }
+}
+
+.mouth {
+  position: absolute;
+  top: 0.78125rem;
+  left: 0.3625rem;
+  width: 0.11875rem;
+  height: 0.0625rem;
+  background: #8e8e8e;
+  border-radius: 40% 40% 100% 50%;
+}
+
+input#dark--Toggle[type="checkbox"] {
+  &:checked {
+    + .dark--Label .face {
+      right: 0.15rem;
+      .face-container {
+        animation: rotateElement forwards 0.3s;
+      }
+      .eye {
+        &.left, &.right {
+          animation: changeFace forwards 0.3s 0.075s;
+        }
+      }
+      .mouth {
+        animation: changeMouth forwards 0.3s 0.075s;
+      }
+    }
+    + .dark--Label .face .eye {
+      &.left {
+        left: 0.25rem;
+      }
+      &.right {
+        left: 0.625rem;
+      }
+    }
+  }
+  + .dark--Label .face {
+    .face-container {
+      animation: rotateElementReverse forwards 0.3s;
+    }
+    .eye {
+      &.left, &.right {
+        animation: changeFaceReverse forwards 0.3s;
+      }
+    }
+    .mouth {
+      animation: changeMouthReverse forwards 0.3s;
+    }
+  }
+}
+
+@keyframes rotateElement {
+  0% {
+    left: 0;
+  }
+
+  25% {
+    left: 1rem;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+    left: -1rem;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 0.25rem;
+    opacity: 1;
+  }
+}
+
+@keyframes changeFace {
+  100% {
+    top: 0.425rem;
+    width: 0.09375rem;
+    height: 0.09375rem;
+    background: #8e8e8e;
+    border: none;
+    border-radius: 100%;
+  }
+}
+
+@keyframes changeMouth {
+  100% {
+    top: 0.6375rem;
+    left: 0.28125rem;
+    height: 0.15625rem;
+    width: 0.40625rem;
+    background: #8e8e8e;
+    background-image: linear-gradient(to bottom, #8e8e8e, #a4a4a4);
+    border-radius: 0.05rem 0.05rem 0.25rem 0.25rem;
+  }
+}
+
+@keyframes rotateElementReverse {
+  0% {
+    left: 0;
+  }
+
+  25% {
+    left: -1rem;
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+    left: 1rem;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes changeFaceReverse {
+  0% {
+    top: 0.425rem;
+    width: 0.09375rem;
+    height: 0.09375rem;
+    border: none;
+    border-radius: 100%;
+    background: #8e8e8e;
+  }
+}
+
+@keyframes changeMouthReverse {
+  0% {
+    top: 0.6375rem;
+    left: 0.225rem;
+    height: 0.15625rem;
+    width: 0.40625rem;
+    background: #8e8e8e;
+    background-image: linear-gradient(to bottom, #8e8e8e, #a4a4a4);
+    border: none;
+    border-radius: 0.05rem 0.05875rem 0.25rem 0.25rem;
+  }
+
+  25% {
+    left: 0.28125rem;
+  }
+}
+
+
+
+
+
+.cbx {
+  user-select: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.cbx:not(:last-child) {
+  margin-right: 6px;
+}
+.cbx span {
+  float: left;
+  vertical-align: middle;
+  transform: translate3d(0, 0, 0);
+}
+.cbx span:first-child {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  transform: scale(1);
+  border: 2px solid var(--color-Text);
+  background: var(--color-FormBG);
+  transition: all 0.2s ease;
+}
+.cbx span:first-child svg {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  fill: none;
+  stroke: var(--color-Text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16px;
+  stroke-dashoffset: 16px;
+  transition: all 0.3s ease;
+  transition-delay: 0.1s;
+  transform: translate3d(0, 0, 0);
+}
+.cbx span:last-child {
+  padding-left: 8px;
+  line-height: 18px;
+}
+.cbx:hover span:first-child {
+  border-color: var(--color-Highlighted);
+}
+.check {
+  position: absolute;
+  visibility: hidden;
+}
+.check:checked + .cbx span:first-child {
+  background: var(--color-Highlighted);
+  border-color: var(--color-Highlighted);
+  animation: wave 0.4s ease;
+}
+.check:checked + .cbx span:first-child svg {
+  stroke-dashoffset: 0;
+}
+
+.inline-svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes wave {
+  50% {
+    transform: scale(0.9);
+  }
+}
+
+
+input[type="radio"]:checked + label {
+  .newradio {
+    background-color: var(--color-Highlighted);
+    box-shadow:
+      -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+      0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+      inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+      inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+      inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+  }
+}
+
+
+.radiobutton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 1e-5;
+  pointer-events: none;
+}
+
+.radiolabel {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.radiotext {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.newradio {
+  position: relative;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  box-shadow:
+    inset -0.05rem -0.05rem 0.08rem rgba($darkShadow,0.6),
+    inset 0.05rem 0.05rem 0.1rem rgba($lightShadow,1),
+    0.5rem 0.5rem 2rem rgba($darkShadow,0.5),
+    0.1rem 0.1rem 0.2rem rgba($darkShadow,0.75);
+  overflow: hidden;
+  transition: 0.2s ease-in-out;
+}
+
+// .newradio::before,
+// .newradio::after {
+//   content: '';
+//   position: absolute;
+//   top: 10%;
+//   left: 10%;
+//   height: 80%;
+//   width: 80%;
+//   border-radius: 50%;
+// }
+
+// .newradio::before {
+//   content:'';
+//   box-shadow:
+//     -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+//     0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+//     inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+//     inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+//     inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+// }
+
+// .newradio::after {
+//   content:'';
+//   background-color: var(--color-Highlighted);
+//   box-shadow:
+//     -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+//     0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+//     inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+//     inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+//     inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+//   transition: opacity .25s ease-in-out, transform .25s ease-in-out;
+// }
+
+// input[type="radio"]:checked + .newradio:after {
+//   background-color: var(--color-Highlighted);
+//   box-shadow:
+//     -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+//     0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+//     inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+//     inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+//     inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+//     opacity: 0;
+//   transition: opacity .25s ease-in-out, transform .25s ease-in-out;
+// }
+
+// input[type="radio"]:checked + .radiotext {
+//   transform: scale3d(.975, .975, 1) translate3d(0, 10%, 0);
+//   opacity: 1;
+// }
+

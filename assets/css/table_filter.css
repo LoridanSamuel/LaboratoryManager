@@ -1,0 +1,42 @@
+
+/*====================================================
+	- classes des filtres
+	- diter les classes ci-dessous pour changer le
+	style des <input> et du bouton "go"
+=====================================================*/
+.btnflt{
+	font-size:10px;
+	margin:0 2px 0 2px; padding:0 1px 0 1px;
+	text-decoration:none; color: #fff;
+	background-color:var(--color-Gray);
+}
+.flt{ 
+	background-color:var(--color-Page); border:1px inset var(--color-TableHeader); 
+	margin:0; width:100%;
+	font-size: 100%;
+}
+.flt_s{
+	background-color:var(--color-Page); border:1px inset var(--color-TableHeader); 
+	margin:0; width:90%;
+	font-size: 100%;
+}
+.inf{ 
+	clear:both; width:auto; height:20px; 
+	background:var(--color-Page); font-size:11px; 
+	margin:0; padding:1px 3px 1px 3px; 
+}
+.ldiv{ float:left; width:30%; position:inherit; }
+.mdiv{ float:left; width:30%; position:inherit; text-align:center; }
+.rdiv{ float:right; width:30%; position:inherit; text-align:right; }
+.loader{ 
+	position:absolute; padding: 15px 0 15px 0;
+	margin-top:7%; width:200px; /*height:50px;*/
+	left:40%; z-index:1000; font-size:14px; font-weight:bold;
+	border:1px solid var(--color-Gray); background:var(--color-Page); 
+	text-align:center; vertical-align:middle;
+}
+div.mdiv select{ height:20px; }
+div.inf a{ color:var(--color-Alert); }
+div.inf a:hover{ text-decoration:none; }
+.tot{ font-weight:bold; }
+

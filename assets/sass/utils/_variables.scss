@@ -1,0 +1,81 @@
+$hue: 210;
+$lightShadow: hsl($hue - 40,90%,85%);
+$base: hsl($hue - 20,22%,96%);
+$mid: hsl($hue + 20,40%,30%);
+$darkShadow: hsl($hue + 40,100%,10%);
+
+:root {
+  --color-Dark: #2e3842;
+  --color-Light: #f4f6f8;
+  --color-Black: #000;
+  --color-Gray: #9a97a8;
+
+  --color-Text: var(--color-Black);
+  --color-Background: var(--color-Dark);
+  --color-Page: var(--color-Light);
+  --color-Button: var(--color-Light);
+  --color-Highlighted: #21b2a6;
+  --color-Navigator: var(--color-Gray);
+  --color-FormBG: rgba(144,144,144,0.25);
+  --color-TableHeader: #ced8e2;
+  --color-Alert: red;
+  --color-Remark: #00c1ff;
+  --color-OK: green;
+  --color-notOpen: #00c1ff;
+  --color-perempted: red;
+  --color-reag: red;
+  --color-ind: green;
+  --color-std: #00c1ff;
+  --color-sc: orange;
+
+  --user-Color-Pref: 'unset';
+
+  --fontFamily: "Open Sans", Helvetica, sans-serif;
+  --fontSize: 10pt;
+  --fontWeight: 400;
+  --letterSpacing: 0.075em;
+  --lineHeight: 1.65em;
+
+  --button-fontSize: 10pt;
+  --button-fontWeight: 700;
+  --button-radius: 0.5rem;
+  --button-letterSpacing: 0.075em;
+
+  --navigator-size: 3.5em;
+  --navigator-weight: 10%;
+  --navigator-bounce: 0.2s cubic-bezier(0.3, 0.3, 0.3, 1);
+  --navigator-ease: 0.12s cubic-bezier(0.3, 0.3, 0.3, 1);
+  --navigator-translate: 0;
+  --navigator-rotate: 0deg;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-Text: var(--color-Light);
+    --color-Page: var(--color-Dark);
+    --color-Button: var(--color-Dark);
+  }
+  .dark {
+    --color-Text: var(--color-Light);
+    --color-Page: var(--color-Dark);
+    --color-Button: var(--color-Dark);
+  }
+
+  .light {
+    --color-Text: var(--color-Black);
+    --color-Page: var(--color-Light);
+    --color-Button: var(--color-Light);
+  }
+}
+
+.dark {
+  --color-Text: var(--color-Light);
+  --color-Page: var(--color-Dark);
+  --color-Button: var(--color-Dark);
+}
+
+.light {
+  --color-Text: var(--color-Black);
+  --color-Page: var(--color-Light);
+  --color-Button: var(--color-Light);
+}

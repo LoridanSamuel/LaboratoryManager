@@ -1,0 +1,44 @@
+ul.icons {
+  cursor: default;
+  list-style: none;
+  padding: 1em 0;
+
+  li {
+    display: inline-block;
+    width: 10em;
+    margin: 0 1.75em;
+    i {
+      padding: 0.5em 0.5em;
+      border-radius: 50%;
+      font-size: 35pt;
+    }
+    label {
+      font-size: 0.9em;
+    }
+  }
+}
+
+.icons li i {
+  padding: 0.5em 1em;
+  background: var(--color-Button);
+  color: var(--color-Text);
+  border: none;
+  border-radius: var(--button-radius);
+  font-size: var(--button-fontSize);
+  font-weight: var(--button-fontWeight);
+  letter-spacing: var(--button-letterSpacing);
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  box-shadow: inset -0.05rem -0.05rem 0.08rem rgba($darkShadow,0.6),
+              inset 0.05rem 0.05rem 0.1rem rgba($lightShadow,1),
+              0.5rem 0.5rem 2rem rgba($darkShadow,0.5),
+              0.1rem 0.1rem 0.2rem rgba($darkShadow,0.75);
+  &:hover {
+    background: var(--color-Highlighted);
+    box-shadow: -0.05rem -0.05rem 0.08rem rgba($darkShadow, 0.6),
+              0.05rem 0.05rem 0.1rem rgba($lightShadow, 1),
+              inset 0.5rem 0.5rem 2rem rgba($darkShadow, 0.5),
+              inset 0.1rem 0.1rem 0.2rem rgba($darkShadow, 0.75),
+              inset -0.5rem -0.5rem 4rem rgba($lightShadow, 0.5);
+  }
+}

@@ -1,0 +1,123 @@
+.form-inscription, .form-reception, .form-open, .form-purity, .form-checking, .form-SOP, .form-destruction, .form-prep, .form-print, .form-selectmatname, .form-selectSpec {
+  width: 50%;
+  margin: 0.75em auto;
+}
+
+.form-createSpec {
+  width: 75%;
+  margin: 0.75em auto;
+}
+
+.form-selectTest {
+  width: 35%;
+  margin: 0.75em auto;
+}
+
+.form-inscription, .form-reception, .form-SOP, .form-SOPfinal, .form-createSpec {
+  > div:first-child {
+    border-top: 1px solid var(--color-Text);
+    border-bottom: 1px solid var(--color-Text);
+  }
+  > div {
+    display: flex;
+    padding: 0.75em;
+    border-bottom: 1px solid var(--color-Text);
+    > label {
+      text-align: right;
+      width: 50%;
+      margin: 0;
+      padding: 0.75em;
+    }
+  }
+  > div:last-child {
+    border: none;
+    display: block;
+    padding: 0;
+    margin: 0.75em;
+  }
+}
+
+.form-SOP {
+  > div:first-child {
+    >label {
+      text-align: left;
+    }
+  }
+}
+
+.form-connexion {
+  width: 25%;
+  margin: 2em auto 0 auto;
+  > div:first-child {
+    border-top: 1px solid var(--color-Text);
+    border-bottom: 1px solid var(--color-Text);
+  }
+  > div:nth-child(2) {
+    border-bottom: 1px solid var(--color-Text);
+  }
+  > div:nth-child(3) {
+    display: flex;
+    justify-content: center;
+  }
+  > div {
+    padding:0.75em;
+  }
+}
+
+.form-checking {
+  > select {
+    margin-bottom: 2em;
+  }
+  #sop {
+    text-align: left;
+  }
+  #pack {
+    font-weight: bold;
+  }
+  input, button {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+.form-selectSpec > fieldset {
+  text-align: left;
+}
+
+.form-createSpec {
+  > div:first-child {
+    justify-content: space-around;
+
+    > div {
+    width: 30%;
+    }
+  }
+  > div:nth-child(2) {
+    display: block;
+  }
+
+  > div:nth-child(3) {
+    align-items: center;
+    justify-content: center;
+
+    > div {
+      margin: 0.75em;
+    }
+
+    > div:nth-child(2) > span {
+      display: flex;
+      align-items: center;
+      
+      > input {
+        margin: 0.5em;
+      }
+    }
+
+    > div:nth-child(4) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+}
+
