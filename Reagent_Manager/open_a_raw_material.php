@@ -11,7 +11,10 @@ include_once('../Connexion/cookieconnect.php');
 
   $namehtml = "";
 
-  $selectRM = $bddmat->query("SELECT DISTINCT mat_name FROM raw_material WHERE opening_date <=> null ORDER BY mat_name");
+  $selectRM = $bddmat->query("SELECT DISTINCT mat_name
+                              FROM raw_material
+                              WHERE opening_date <=> null
+                              ORDER BY mat_name");
     while ($RM = $selectRM->fetch()) {
     $namehtml .= '<option value="'.$RM['mat_name'].'">'.$RM['mat_name'].'</option>';
     }
@@ -37,7 +40,6 @@ include_once('../Connexion/cookieconnect.php');
           <div id="page-wrapper">
             
             <?php include('../header.php'); ?>
-
 
             <section class='section'>
               <div class='section--title'>
@@ -76,13 +78,30 @@ include_once('../Connexion/cookieconnect.php');
   $openingDateTimestamp = strtotime($openingDate);
   $peremptingDate = date('Y-m-d', strtotime('+ 5 year', $openingDateTimestamp));
 
-  $updateOpening = $bddmat->prepare('UPDATE raw_material SET opening_date = ?, perempting_date = ? WHERE id = ? ');
-  $updateOpening->execute(array($openingDate, $peremptingDate, $id)) or die('Erreur SQL !'.$sql.'<br />');
+  $solution['matName'] = $mat_name;
+  $solution['matId'] = $id;
+
+  $solution = json_encode($solution);
+
+  $updateOpening = $bddmat->prepare('UPDATE raw_material
+                                     SET opening_date = :openingDate, perempting_date = :peremptingDate
+                                     WHERE id = :matId');
+  $updateOpening->bindValue(':openingDate', $openingDate);
+  $updateOpening->bindValue(':peremptingDate', $peremptingDate);
+  $updateOpening->bindValue(':matId', $id, PDO::PARAM_INT);
+  $updateOpening->execute();
   $updateOpening->closeCursor();
 
   // Check if another lot is already open and ask if the user want to close it.
-    $selectAlreadyOpen = $bddmat->prepare('SELECT * FROM raw_material WHERE mat_name = ? AND opening_date IS NOT null AND destruction_date IS null AND id <> ?');
-    $selectAlreadyOpen->execute(array($mat_name, $id)) or die('Erreur SQL !'.$sql.'<br />');
+    $selectAlreadyOpen = $bddmat->prepare('SELECT *
+                                           FROM raw_material
+                                           WHERE mat_name = :matName
+                                             AND opening_date IS NOT null
+                                             AND destruction_date IS null
+                                             AND id <> :matId');
+    $selectAlreadyOpen->bindValue(':matName', $mat_name);
+    $selectAlreadyOpen->bindValue(':matId', $id);
+    $selectAlreadyOpen->execute();
     $selectAlreadyOpen->closeCursor();
 
     $openExist = $selectAlreadyOpen->rowCount();
@@ -102,8 +121,7 @@ include_once('../Connexion/cookieconnect.php');
         <footer>
           <div id="footerText">
             <form method="post" action="close_a_raw_material.php">
-              <input type="hidden" value="<?php echo($mat_name);?>" name="mat_name"/>
-              <input type="hidden" value="<?php echo($id);?>" name="id"/>
+              <input type="hidden" value='<?php echo($solution);?>' name="solution"/>
               <div class="modal_buttons">
                 <button type="submit" name="formClosable" class="btn">Oui</button>
                 <a href="open_a_raw_material.php" class="btn">Non</a>
@@ -139,7 +157,6 @@ include_once('../Connexion/cookieconnect.php');
   ?>
 
 <!-- Scripts -->
-  <!-- <script src="../assets/js/jquery.min.js"></script> -->
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/darkmode.js"></script>
   <script src="../assets/js/javascript functions/open_a_raw_material.js"></script>

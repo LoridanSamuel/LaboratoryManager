@@ -6,6 +6,33 @@ $bddmat = new PDO('mysql:host=127.0.0.1;dbname=material;charset=utf8', 'root', '
 
 include_once('../Connexion/cookieconnect.php');
 
+class Solution
+{
+  public string $typeOfMaterial;
+  public int $solNumber;
+  public string $name;
+  public string $concentration;
+  public string $solvent;
+  public string $packaging;
+  public string $preparationDate;
+  public string $expirationDate;
+  public string $materialUsed;
+  public string $maker;
+  public function __construct($typeOfMaterial, $solNumber, $name, $concentration, $solvent, $packaging, $preparationDate, $expirationDate, $materialUsed, $maker)
+  {
+    $this->typeOfMaterial = $typeOfMaterial;
+    $this->solNumber = $solNumber;
+    $this->name = $name;
+    $this->concentration = $concentration;
+    $this->solvent = $solvent;
+    $this->packaging = $packaging;
+    $this->preparationDate = $preparationDate;
+    $this->expirationDate = $expirationDate;
+    $this->materialUsed = $materialUsed;
+    $this->maker = $maker;
+  }
+}
+
 if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
   ?>
   <!DOCTYPE HTML>
@@ -28,7 +55,6 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
           <div id="page-wrapper">
             
             <?php include('../header.php'); ?>
-
 
             <section class='section'>
               <div class='section--title'>
@@ -90,76 +116,72 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
 
 if(isset($_SESSION['id'],$_POST['formpreparation']) AND $_SESSION['id'] > 0) {
   $typeOfMaterial = htmlspecialchars($_POST['typeOfMaterial']);
-
-  // $name, $concentration, $solvent from $name
-    $name = htmlspecialchars($_POST['name']);
-    if($typeOfMaterial == "scale") {
-      list($name, $solvent) = explode(" dans ", $name, 2);
-      $concentration = '-';
-    } else {
-      list($name, $concentration) = explode(" à ", $name, 2);
-      list($concentration, $solvent) = explode(" dans ", $concentration, 2);
+  $solNumber = htmlspecialchars($_POST['sol_number']);
+  $name = htmlspecialchars($_POST['name']);
+  //concentration and solvent from name
+  if($typeOfMaterial == "scale") {
+    list($name, $solvent) = explode(" dans ", $name, 2);
+    $concentration = '-';
+  } else {
+    list($name, $concentration) = explode(" à ", $name, 2);
+    list($concentration, $solvent) = explode(" dans ", $concentration, 2);
+  }
+  //packaging
+  $packaging = htmlspecialchars($_POST['packaging']);
+  $theoricalPack = htmlspecialchars($_POST['theoricalpack']);
+  if($packaging == "") {
+      $packaging = $theoricalPack;
+  } else {
+    $unityExist = strrpos($packaging, "mL");
+    if($unityExist === false) {
+      $packaging .= "mL";
     }
+  }
 
-  // $lifetime, solNumber
-    $lifetime = htmlspecialchars($_POST['lifetime']);
-    $solNumber = htmlspecialchars($_POST['sol_number']);
+  $preparationDate = htmlspecialchars($_POST['preparation_date']);
+  //expirationDate from preparationDate and lifetime
+  $preparationDateTimestamp = strtotime($preparationDate);
+  $lifetime = htmlspecialchars($_POST['lifetime']);
+  $lifetime = str_replace("jour", "day", $lifetime);
+  $lifetime = str_replace("mois", "month", $lifetime);
+  $lifetime = str_replace("an", "year", $lifetime);
+  $expirationDate = date('Y-m-d', strtotime('+'.$lifetime, $preparationDateTimestamp));
+  //materialUsed
+  $numberOfCompounds = htmlspecialchars($_POST['numberofcompounds']);
+  $materialUsed = "";
 
-  // $materialUsed from $component(1 to $numberOfCompounds) and $realQuantity(1 to $numberOfCompounds)
-    $numberOfCompounds = htmlspecialchars($_POST['numberofcompounds']);
-    $materialUsed = "";
+  for($i = 0; $i < $numberOfCompounds; $i++) {
+    $componentName = htmlspecialchars($_POST['compname' . $i]);
+    $componentDetail = htmlspecialchars($_POST['compdetail' . $i]);
+    $realQuantity = htmlspecialchars($_POST['realqty' . $i]);
 
-    for($i = 0; $i < $numberOfCompounds; $i++) {
-      $componentName = htmlspecialchars($_POST['compname' . $i]);
-      $componentDetail = htmlspecialchars($_POST['compdetail' . $i]);
-      $realQuantity = htmlspecialchars($_POST['realqty' . $i]);
+    $componentDetail = str_replace("(", " _ ", $componentDetail);
+    $componentDetail = str_replace(")", " _ ", $componentDetail);
+    $componentDetail = str_replace("Produit pur - lot n°", "", $componentDetail);
 
-      $componentDetail = str_replace("(", " _ ", $componentDetail);
-      $componentDetail = str_replace(")", " _ ", $componentDetail);
-      $componentDetail = str_replace("Produit pur - lot n°", "", $componentDetail);
-
-      $materialUsed .= $componentName . $componentDetail . $realQuantity . " $ ";
+    $materialUsed .= $componentName . $componentDetail . $realQuantity . " $ ";
+  }
+  $materialUsed = substr($materialUsed, 0, -3);
+  //maker from session info
+  $sessionid = htmlspecialchars($_SESSION['id']);
+  $selectMaker = $bdd->prepare('SELECT pseudo
+                                FROM membres
+                                WHERE id = :memberId');
+  $selectMaker->bindValue(':memberId', $sessionid, PDO::PARAM_INT);
+  $selectMaker->execute();
+    while ($result = $selectMaker->fetch()) {
+      $maker = $result['pseudo'];
     }
+  $selectMaker->closeCursor();
+  $words = explode(" ", $maker);
+  $maker = "";
+  foreach($words as $w) {
+    $maker .= $w[0];
+  }
 
-    $materialUsed = substr($materialUsed, 0, -3);
+  $solution = new Solution($typeOfMaterial, $solNumber, $name, $concentration, $solvent, $packaging, $preparationDate, $expirationDate, $materialUsed, $maker);
 
-  // $packaging in case of non changed or in case of no unit
-    $packaging = htmlspecialchars($_POST['packaging']);
-    $theoricalPack = htmlspecialchars($_POST['theoricalpack']);
-    if($packaging == "") {
-        $packaging = $theoricalPack;
-    } else {
-      $unityExist = strrpos($packaging, "mL");
-      if($unityExist === false) {
-        $packaging .= "mL";
-      }
-    }
-
-  // $expirationDate from $preparation_date and $lifetime
-    $preparationDate = htmlspecialchars($_POST['preparation_date']);
-    $preparationDateTimestamp = strtotime($preparationDate);
-
-    $lifetime = str_replace("jour", "day", $lifetime);
-    $lifetime = str_replace("mois", "month", $lifetime);
-    $lifetime = str_replace("an", "year", $lifetime);
-
-    $expirationDate = date('Y-m-d', strtotime('+'.$lifetime, $preparationDateTimestamp));
-
-  // $maker from session table
-    $sessionid = htmlspecialchars($_SESSION['id']);
-    $selectMaker = $bdd->prepare('SELECT pseudo FROM membres WHERE id = ?');
-    $selectMaker->execute(array($sessionid));
-      while ($result = $selectMaker->fetch()) {
-        $maker = $result['pseudo'];
-      }
-    $selectMaker->closeCursor();
-
-    $words = explode(" ", $maker);
-    $maker = "";
-    foreach($words as $w) {
-      $maker .= $w[0];
-    }
-
+  $solution = php2json($solution);
   ?>
   <link rel="stylesheet" href="../assets/css/prefixed/main.css" />
   <div id="oModal" class="oModal">
@@ -174,16 +196,7 @@ if(isset($_SESSION['id'],$_POST['formpreparation']) AND $_SESSION['id'] > 0) {
       <footer>
         <div id="footerText">
           <form method="post" action="">
-            <input type="hidden" value="<?php echo($typeOfMaterial);?>" name="typeOfMaterial"/>
-            <input type="hidden" value="<?php echo($solNumber);?>" name="sol_number"/>
-            <input type="hidden" value="<?php echo($name);?>" name="name"/>
-            <input type="hidden" value="<?php echo($concentration);?>" name="concentration"/>
-            <input type="hidden" value="<?php echo($solvent);?>" name="solvent"/>
-            <input type="hidden" value="<?php echo($packaging);?>" name="packaging"/>
-            <input type="hidden" value="<?php echo($preparationDate);?>" name="preparation_date"/>
-            <input type="hidden" value="<?php echo($expirationDate);?>" name="expiration_date"/>
-            <input type="hidden" value="<?php echo($materialUsed);?>" name="material_used"/>
-            <input type="hidden" value="<?php echo($maker);?>" name="maker"/>
+          <input type="hidden" value="<?php echo($solution);?>" name="solution"/>
             <div class="modal_buttons">
               <button type="submit" name="prepformConfirmed" class="btn">Oui</button>
               <a href="prepare_a_solution.php" class="btn">Non</a>
@@ -198,16 +211,20 @@ if(isset($_SESSION['id'],$_POST['formpreparation']) AND $_SESSION['id'] > 0) {
 
 // Return value to database
   if(isset($_SESSION['id'],$_POST['prepformConfirmed']) AND $_SESSION['id'] > 0){
-    $typeOfMaterial = htmlspecialchars($_POST['typeOfMaterial']);
-    $solNumber = htmlspecialchars($_POST['sol_number']);
-    $name = htmlspecialchars($_POST['name']);
-    $concentration = htmlspecialchars($_POST['concentration']);
-    $solvent = htmlspecialchars($_POST['solvent']);
-    $packaging = htmlspecialchars($_POST['packaging']);
-    $preparationDate = htmlspecialchars($_POST['preparation_date']);
-    $expirationDate = htmlspecialchars($_POST['expiration_date']);
-    $materialUsed = htmlspecialchars($_POST['material_used']);
-    $maker = htmlspecialchars($_POST['maker']);
+
+    var_dump($_POST['solution']);
+    $solution = json2php($_POST['solution']);
+
+    $typeOfMaterial = htmlspecialchars($solution->typeOfMaterial);
+    $solNumber = htmlspecialchars($solution->solNumber);
+    $name = htmlspecialchars($solution->name);
+    $concentration = htmlspecialchars($solution->concentration);
+    $solvent = htmlspecialchars($solution->solvent);
+    $packaging = htmlspecialchars($solution->packaging);
+    $preparationDate = htmlspecialchars($solution->preparationDate);
+    $expirationDate = htmlspecialchars($solution->expirationDate);
+    $materialUsed = htmlspecialchars($solution->materialUsed);
+    $maker = htmlspecialchars($solution->maker);
 
     switch($typeOfMaterial) {
       case "reagent":
@@ -228,15 +245,42 @@ if(isset($_SESSION['id'],$_POST['formpreparation']) AND $_SESSION['id'] > 0) {
         break;
     }
 
-    $selectAlreadyPrepared = $bddmat->prepare('SELECT * FROM '.$typeOfMaterial.' WHERE '.$solutionName.' = ? AND concentration = ? AND solvent = ? AND status != "Détruit"');
-    $selectAlreadyPrepared->execute(array($name, $concentration, $solvent));
-    $alreadyPrepared = $selectAlreadyPrepared->rowCount();
+    $selectAlreadyPrepared = $bddmat->prepare("SELECT *
+                                               FROM {$typeOfMaterial}
+                                               WHERE {$solutionName} = :solutionName
+                                                 AND concentration = :concentration
+                                                 AND solvent = :solvent
+                                                 AND status != 'Détruit'");
+    $selectAlreadyPrepared->bindValue(':solutionName', $name);
+    $selectAlreadyPrepared->bindValue(':concentration', $concentration);
+    $selectAlreadyPrepared->bindValue(':solvent', $solvent);
+    $selectAlreadyPrepared->execute();
+    $alreadyPrepared = count($selectAlreadyPrepared->fetchAll());
     if($alreadyPrepared != 0) {
-      $closeOther = $bddmat->prepare('UPDATE '.$typeOfMaterial.' SET destruction_date = ? WHERE '.$solutionName.' = ? AND concentration = ? AND solvent = ? AND status != "Détruit"');
-      $closeOther->execute(array($preparationDate, $name, $concentration, $solvent));
+      $closeOther = $bddmat->prepare("UPDATE {$typeOfMaterial}
+                                      SET preparation_date = :preparationDate
+                                      WHERE {$solutionName} = :solutionName
+                                         AND concentration = :concentration
+                                         AND solvent = :solvent
+                                         AND status != 'Détruit'");
+      $closeOther->bindValue(':preparationDate', $preparationDate);
+      $closeOther->bindValue(':solutionName', $name);
+      $closeOther->bindValue(':concentration', $concentration);
+      $closeOther->bindValue(':solvent', $solvent);
+      $closeOther->execute();
       $closeOther->closeCursor();
     }
-    $insertSolution = $bddmat->prepare('INSERT INTO '.$typeOfMaterial.' ('.$solutionNumber.', '.$solutionName.', concentration, solvent, packaging, preparation_date, expiration_date, material_used, maker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $insertSolution = $bddmat->prepare("INSERT INTO {$typeOfMaterial}
+                                        ({$solutionNumber},
+                                         {$solutionName},
+                                         concentration,
+                                         solvent,
+                                         packaging,
+                                         preparation_date,
+                                         expiration_date,
+                                         material_used,
+                                         maker)
+                                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $insertSolution->execute(array($solNumber, $name, $concentration, $solvent, $packaging, $preparationDate, $expirationDate, $materialUsed, $maker)) or die('Erreur SQL !'.$sql.'<br />');
     $insertSolution->closeCursor();
     ?>
@@ -259,10 +303,23 @@ if(isset($_SESSION['id'],$_POST['formpreparation']) AND $_SESSION['id'] > 0) {
     </div>
     <?php
   }
+  function json2php($json) {
+    $json = str_replace('&quot;', '"', $json);
+    $json = str_replace('&gt;=', '>=', $json);
+    $json = str_replace('/b', ' ', $json);
+    return json_decode($json);
+  }
+
+  function php2json($php) {
+    $json = json_encode($php);
+    $json = str_replace('"', '&quot;', $json);
+    $json = str_replace('>=', '&gt;=', $json);
+    $json = str_replace(' ', '/b', $json);
+    return $json;
+  }
   ?>
 
 <!-- Scripts -->
-  <!-- <script src="../assets/js/jquery.min.js"></script> -->
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/darkmode.js"></script>
   <script src="../assets/js/javascript functions/prepare_a_solution.js"></script>

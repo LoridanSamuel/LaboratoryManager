@@ -6,6 +6,29 @@ $bddmat = new PDO('mysql:host=127.0.0.1;dbname=material;charset=utf8', 'root', '
 
 include_once('../Connexion/cookieconnect.php');
 
+class solution
+{
+  public string $typeOfMaterial;
+  public string $name;
+  public string $concentration;
+  public string $solvent;
+  public string $packaging;
+  public string $lifetime;
+  public ?string $SOPtext = null;
+  public ?string $productsUsed = null;
+  public int $numberOfProduct;
+  public function __construct($typeOfMaterial, $name, $concentration, $solvent, $packaging, $lifetime, $numberOfProduct)
+  {
+    $this->typeOfMaterial = $typeOfMaterial;
+    $this->name = $name;
+    $this->concentration = $concentration;
+    $this->solvent = $solvent;
+    $this->packaging = $packaging;
+    $this->lifetime = $lifetime;
+    $this->numberOfProduct = $numberOfProduct;
+  }
+}
+
 if(isset($_SESSION['id'],$_POST['formSOP']) AND $_SESSION['id'] > 0) {
   $typeOfMaterial = htmlspecialchars($_POST['typeOfMaterial']);
   $name = htmlspecialchars($_POST['name']);
@@ -14,6 +37,10 @@ if(isset($_SESSION['id'],$_POST['formSOP']) AND $_SESSION['id'] > 0) {
   $packaging = htmlspecialchars($_POST['packaging']);
   $lifetime = htmlspecialchars($_POST['lifetime']);
   $numberOfProduct = htmlspecialchars($_POST['numberOfProduct']);
+
+  $solution = new Solution($typeOfMaterial, $name, $concentration, $solvent, $packaging, $lifetime, $numberOfProduct);
+
+  $solution = php2json($solution);
 
   $typeOfMaterial === "scale" ? $fullName = $name. " dans " .$solvent : $fullName = $name. " à " .$concentration. " dans " .$solvent;
 
@@ -68,7 +95,8 @@ if(isset($_SESSION['id'],$_POST['formSOP']) AND $_SESSION['id'] > 0) {
         $columnName = 'sc_name';
         break;
     }
-    $selectData = $bddmat->query('SELECT DISTINCT '.$critera.' FROM '.$materialDataBase );
+    $selectData = $bddmat->query("SELECT DISTINCT {$critera}
+                                  FROM {$materialDataBase}");
       while ($data = $selectData->fetch()) {
         if($materialDataBase === "raw_material") {
           $componentstr = $data[$columnName]. ' ('.$materialType.')';
@@ -150,13 +178,7 @@ if(isset($_SESSION['id'],$_POST['formSOP']) AND $_SESSION['id'] > 0) {
                   </div>
                 </div>
                 <div>
-                  <input type="hidden" value="<?php echo($typeOfMaterial);?>" name="typeOfMaterial"/>
-                  <input type="hidden" value="<?php echo($name);?>" name="name"/>
-                  <input type="hidden" value="<?php echo($concentration);?>" name="concentration"/>
-                  <input type="hidden" value="<?php echo($solvent);?>" name="solvent"/>
-                  <input type="hidden" value="<?php echo($packaging);?>" name="packaging"/>
-                  <input type="hidden" value="<?php echo($lifetime);?>" name="lifetime"/>
-                  <input type="hidden" value="<?php echo($numberOfProduct);?>" name="numberOfProduct"/>
+                  <input type="hidden" value="<?php echo($solution);?>" name="solution"/>
                   <button type="submit" name="formSOPfinal" class="btn">Envoyer</button>
                 </div>
               </form>
@@ -170,14 +192,14 @@ if(isset($_SESSION['id'],$_POST['formSOP']) AND $_SESSION['id'] > 0) {
 }
 
 if(isset($_SESSION['id'],$_POST['formSOPfinal']) AND $_SESSION['id'] > 0){
-  $typeOfMaterial = htmlspecialchars($_POST['typeOfMaterial']);
-  $name = htmlspecialchars($_POST['name']);
-  $concentration = htmlspecialchars($_POST['concentration']);
-  $solvent = htmlspecialchars($_POST['solvent']);
-  $packaging = htmlspecialchars($_POST['packaging']);
-  $lifetime = htmlspecialchars($_POST['lifetime']);
-  $numberOfProduct = htmlspecialchars($_POST['numberOfProduct']);
+
+  $solution = json2php($_POST['solution']);
+
+  $numberOfProduct = htmlspecialchars($solution->numberOfProduct);
   $SOPtext = htmlspecialchars($_POST['SOPtext']);
+
+  $solution->SOPtext = $SOPtext;
+
   $productsUsed = "";
 
   for ($i = 1; $i <= $numberOfProduct; $i++){
@@ -197,6 +219,8 @@ if(isset($_SESSION['id'],$_POST['formSOPfinal']) AND $_SESSION['id'] > 0){
   }
 
   $productsUsed = substr($productsUsed, 0, -3);
+  $solution->productsUsed = $productsUsed;
+  $solution = php2json($solution);
 
   ?>
   <link rel="stylesheet" href="../assets/css/prefixed/main.css" />
@@ -212,14 +236,7 @@ if(isset($_SESSION['id'],$_POST['formSOPfinal']) AND $_SESSION['id'] > 0){
       <footer>
         <div id="footerText">
           <form method="post" action="">
-            <input type="hidden" value="<?php echo($typeOfMaterial);?>" name="typeOfMaterial"/>
-            <input type="hidden" value="<?php echo($name);?>" name="name"/>
-            <input type="hidden" value="<?php echo($concentration);?>" name="concentration"/>
-            <input type="hidden" value="<?php echo($solvent);?>" name="solvent"/>
-            <input type="hidden" value="<?php echo($packaging);?>" name="packaging"/>
-            <input type="hidden" value="<?php echo($lifetime);?>" name="lifetime"/>
-            <input type="hidden" value="<?php echo($productsUsed);?>" name="productsUsed"/>
-            <input type="hidden" value="<?php echo($SOPtext);?>" name="SOPtext"/>
+            <input type="hidden" value="<?php echo($solution);?>" name="solution"/>
             <div class="modal_buttons">
               <button type="submit" name="formConfirmed" class="btn">Oui</button>
               <a href="create_a_SOP_final.php" class="btn">Non</a>
@@ -236,25 +253,33 @@ if(isset($_SESSION['id'],$_POST['formSOPfinal']) AND $_SESSION['id'] > 0){
 <?php
 // Return value to database
   if(isset($_SESSION['id'],$_POST['formConfirmed']) AND $_SESSION['id'] > 0){
-    $typeOfMaterial = htmlspecialchars($_POST['typeOfMaterial']);
-    $name = htmlspecialchars($_POST['name']);
-    $concentration = htmlspecialchars($_POST['concentration']);
-    $solvent = htmlspecialchars($_POST['solvent']);
-    $packaging = htmlspecialchars($_POST['packaging']);
-    $lifetime = htmlspecialchars($_POST['lifetime']);
-    $SOPtext = htmlspecialchars($_POST['SOPtext']);
-    $productsUsed = htmlspecialchars($_POST['productsUsed']);
+
+    $solution = json2php($_POST['solution']);
+
+    $typeOfMaterial = htmlspecialchars($solution->typeOfMaterial);
+    $name = htmlspecialchars($solution->name);
+    $concentration = htmlspecialchars($solution->concentration);
+    $solvent = htmlspecialchars($solution->solvent);
+    $packaging = htmlspecialchars($solution->packaging);
+    $lifetime = htmlspecialchars($solution->lifetime);
+    $SOPtext = htmlspecialchars($solution->SOPtext);
+    $productsUsed = htmlspecialchars($solution->productsUsed);
     $solutionNumber = "";
 
-    $selectSolutionNumber = $bddmat->prepare('SELECT sol_number FROM sop WHERE type = ? ORDER BY sol_number DESC LIMIT 1');
-    $selectSolutionNumber->execute(array($typeOfMaterial)) or die('Erreur SQL !'.$sql.'<br />');
+    $selectSolutionNumber = $bddmat->prepare('SELECT sol_number FROM sop
+                                              WHERE type = :typeOfMaterial 
+                                              ORDER BY sol_number
+                                              DESC LIMIT 1');
+    $selectSolutionNumber->bindValue(':typeOfMaterial', $typeOfMaterial);
+    $selectSolutionNumber->execute();
     $lastNumber = $selectSolutionNumber->fetch(PDO::FETCH_ASSOC);
 
       $solutionNumber = $lastNumber['sol_number'] + 1;
     $selectSolutionNumber->closeCursor();
 
-    $insertSOP = $bddmat->prepare('INSERT INTO sop (sol_number, name, concentration, solvent, type, packaging, productsUsed, SOPtext, lifetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    $insertSOP->execute(array($solutionNumber, $name, $concentration, $solvent, $typeOfMaterial, $packaging, $productsUsed, $SOPtext, $lifetime)) or die('Erreur SQL !'.$sql.'<br />');
+    $insertSOP = $bddmat->prepare('INSERT INTO sop (sol_number, name, concentration, solvent, type, packaging, used_products, SOPtext, lifetime)
+                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $insertSOP->execute(array($solutionNumber, $name, $concentration, $solvent, $typeOfMaterial, $packaging, $productsUsed, $SOPtext, $lifetime));
 
     $insertSOP->closeCursor();
     ?>
@@ -277,10 +302,24 @@ if(isset($_SESSION['id'],$_POST['formSOPfinal']) AND $_SESSION['id'] > 0){
     </div>
     <?php
   }
+
+  function json2php($json) {
+    $json = str_replace('&quot;', '"', $json);
+    $json = str_replace('&gt;=', '>=', $json);
+    $json = str_replace('/b', ' ', $json);
+    return json_decode($json);
+  }
+
+  function php2json($php) {
+    $json = json_encode($php);
+    $json = str_replace('"', '&quot;', $json);
+    $json = str_replace('>=', '&gt;=', $json);
+    $json = str_replace(' ', '/b', $json);
+    return $json;
+  }
   ?>
 
 <!-- Scripts -->
-  <script src="../assets/js/jquery.min.js"></script>
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/darkmode.js"></script>
 

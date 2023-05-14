@@ -43,10 +43,12 @@ include_once('../Connexion/cookieconnect.php');
           $html = &$typehtml;
           break;
       }
-      $selection = $bddmat -> query('SELECT DISTINCT '.$column.' FROM raw_material ORDER BY '.$column);
-        while ($result = $selection -> fetch()) {
-          $html .= '<option value="' . $result[$column].'">';
-        }
+      $selection = $bddmat -> query("SELECT DISTINCT {$column}
+                                     FROM raw_material
+                                     ORDER BY {$column}");
+      while ($result = $selection -> fetch()) {
+        $html .= '<option value="'.$result[$column].'">';
+      }
       $selection->closecursor();
     }
 
@@ -99,8 +101,8 @@ include_once('../Connexion/cookieconnect.php');
                       <datalist id="sellerRef"><?php echo($refhtml) ?></datalist>
                     </div>
                     <div>
-                      <label for="packaging">Conditionnement :</label>
-                      <input type="text" list="packaging" placeholder="Conditionnement" name="packaging" required/>
+                      <label for="packaging">Conditionnement (en mL ou g):</label>
+                      <input type="text" list="packaging" placeholder="Conditionnement" name="packaging" required pattern="^\d+\.?\d*[(mL)g]{1}$"/>
                       <datalist id="packaging"><?php echo($packhtml) ?></datalist>
                     </div>
                     <div>
@@ -110,7 +112,7 @@ include_once('../Connexion/cookieconnect.php');
                     </div>
                     <div>
                       <label for="type">Usage :</label>
-                      <input type="text" list="type" placeholder="Usage" name="type"  required/>
+                      <input type="text" list="type" placeholder="Usage" name="type"  required pattern="^[A-Z]{1}[a-z]+$"/>
                       <datalist id="type"><?php echo($typehtml) ?></datalist>
                     </div>
                     <div>
@@ -154,13 +156,19 @@ include_once('../Connexion/cookieconnect.php');
 
     //Check if the raw material already has an entry in the Data Base. If yes, keep the same material number, else give the last material number known and increment it
 
-    $reqdouble = $bddmat->prepare('SELECT mat_number FROM raw_material WHERE mat_name = ?');
-    $reqdouble->execute(array($mat_name));
+    $reqdouble = $bddmat->prepare('SELECT mat_number
+                                   FROM raw_material
+                                   WHERE mat_name = :matName');
+    $reqdouble->bindValue(':matName', $mat_name);
+    $reqdouble->execute();
     $doubleexist = $reqdouble->rowCount();
 
     if($doubleexist == 0) {
       $reqdouble -> closeCursor();
-      $reqmatnumber = $bddmat->query('SELECT mat_number FROM raw_material ORDER BY mat_number DESC');
+      $reqmatnumber = $bddmat->query('SELECT mat_number
+                                      FROM raw_material
+                                      ORDER BY mat_number
+                                      DESC');
       $lastmatnumber = $reqmatnumber->fetch();
       $mat_number = $lastmatnumber['mat_number'] + 1;
       $reqmatnumber -> closeCursor();
@@ -178,16 +186,9 @@ include_once('../Connexion/cookieconnect.php');
       $purity = null;
     }
 
-    $mat_name_length = strlen($mat_name);
-    $lot_number_length = strlen($lot_number);
-    $seller_length = strlen($seller);
-    $reference_length = strlen($reference);
-    $packaging_length = strlen($packaging);
-    $grade_length = strlen($grade);
-    $type_length = strlen($type);
-    $purity_length = strlen($purity);
-
-    $insertmat = $bddmat->prepare("INSERT INTO raw_material(mat_number, mat_name, type, seller, reference, packaging, lot_number, grade, purity, reception_date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $insertmat = $bddmat->prepare("INSERT INTO raw_material
+                                   (mat_number, mat_name, type, seller, reference, packaging, lot_number, grade, purity, reception_date)
+                                   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $insertmat->execute(array($mat_number, $mat_name, $type, $seller, $reference, $packaging, $lot_number, $grade, $purity, $reception_date));
     $insertmat->closeCursor();
     ?>
@@ -213,6 +214,5 @@ include_once('../Connexion/cookieconnect.php');
   ?>
 
 <!-- Scripts -->
-  <script src="../assets/js/jquery.min.js"></script>
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/darkmode.js"></script>

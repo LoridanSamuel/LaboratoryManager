@@ -9,43 +9,59 @@ include_once('../Connexion/cookieconnect.php');
 // Table filling
   if(isset($_SESSION['id'],$_POST['formClosable']) AND $_SESSION['id'] > 0) {
 
-    $mat_name = htmlspecialchars($_POST['mat_name']);
-    $id = htmlspecialchars($_POST['id']);
+    $openedSolution = htmlspecialchars($_POST['solution']);
+    $openedSolution = str_replace('&quot;', '"', $openedSolution);
+    $openedSolution = json_decode($openedSolution);
+    $mat_name = $openedSolution->matName;
+    $id = $openedSolution->matId;
+    
     $itemhtmlTotal = "";
     $i = 1;
 
-    $selectClosableMaterial = $bddmat->prepare('SELECT id, lot_number, seller, reference, reception_date, opening_date FROM raw_material WHERE mat_name = ? 
-                                                                                                                                           AND id <> ? 
-                                                                                                                                           AND opening_date IS NOT null 
-                                                                                                                                           AND destruction_date IS null');
-      $selectClosableMaterial->execute(array($mat_name, $id));
-      while ($closableMaterial = $selectClosableMaterial->fetch()) {
+    $selectClosableMaterial = $bddmat->prepare('SELECT id,
+                                                       lot_number,
+                                                       seller,
+                                                       reference,
+                                                       reception_date,
+                                                       opening_date
+                                                FROM raw_material
+                                                WHERE mat_name = :matName 
+                                                  AND id <> :matId 
+                                                  AND opening_date IS NOT null 
+                                                  AND destruction_date IS null');
+    $selectClosableMaterial->bindValue(':matName', $mat_name);
+    $selectClosableMaterial->bindValue(':matId', $id, PDO::PARAM_INT);
+    $selectClosableMaterial->execute();
+    while ($closableMaterial = $selectClosableMaterial->fetch()) {
+      $reception_date = date("d/m/Y", strtotime($closableMaterial['reception_date']));
+      $date = date('Y-m-d');
+      $closableSolution = new stdCLass();
+      $closableSolution->matName = $mat_name;
+      $closableSolution->matId = $closableMaterial['id'];
+      $closableSolution = json_encode($closableSolution);
+      $closableSolution = htmlspecialchars($closableSolution);
 
-        $reception_date = date("d/m/Y", strtotime($closableMaterial['reception_date']));
+      $itemhtml = '<tr>
+                    <td>'.$mat_name.'</td>
+                    <td>'.$closableMaterial['lot_number'].'</td>
+                    <td>'.$closableMaterial['seller'].'</td>
+                    <td>'.$closableMaterial['reference'].'</td>
+                    <td>'.$reception_date.'</td>
+                    <td nowrap="nowrap">
+                      <form method="post">
+                        <input type="hidden" value="'.htmlspecialchars($_POST['solution']).'" name="solution"/>
+                        <input type="hidden" value="'.$closableSolution.'" name="closableSolution"/>
+                        <div class="table_button">
+                          <input type="date" name="destruction_date" value="'.$date.'" required/>
+                          <button type="submit" name="formClose" class="table--btn">Fermer</button>
+                        </div>
+                      </form>
+                    </td>
+                  </tr>';
 
-        $date = date('Y-m-d');
-
-        $itemhtml = '<tr>
-                      <td>'.$mat_name.'</td>
-                      <td>'.$closableMaterial['lot_number'].'</td>
-                      <td>'.$closableMaterial['seller'].'</td>
-                      <td>'.$closableMaterial['reference'].'</td>
-                      <td>'.$reception_date.'</td>
-                      <td nowrap="nowrap">
-                        <form method="post">
-                          <input type="hidden" value="'.$mat_name.'" name="mat_name"/>
-                          <input type="hidden" value="'.$closableMaterial['id'].'" name="id"/>
-                          <div class="table_button">
-                            <input type="date" name="destruction_date" value="'.$date.'" required/>
-                            <button type="submit" name="formClose" class="btn">Fermer</button>
-                          </div>
-                        </form>
-                      </td>
-                    </tr>';
-
-        $itemhtmlTotal .= $itemhtml;
-        $i++;
-      }
+      $itemhtmlTotal .= $itemhtml;
+      $i++;
+    }
     $selectClosableMaterial->closeCursor();
     ?>
     <!DOCTYPE HTML>
@@ -102,20 +118,31 @@ include_once('../Connexion/cookieconnect.php');
 // Database insertion
   if(isset($_SESSION['id'],$_POST['formClose']) AND $_SESSION['id'] > 0){
 
-    $mat_name = htmlspecialchars($_POST['mat_name']);
-    $id = htmlspecialchars($_POST['id']);
+    $openedSolution = htmlspecialchars($_POST['solution']);
+    $closableSolution = htmlspecialchars(($_POST['closableSolution']));
+    $closableSolution = str_replace('&quot;', '"', $closableSolution);
+    $closableSolution = json_decode($closableSolution);
+    $mat_name = $closableSolution->matName;
+    $id = $closableSolution->matId;
     $destruction_date = htmlspecialchars($_POST['destruction_date']);
 
-    $updateDestructionDate = $bddmat->prepare('UPDATE raw_material SET destruction_date = ?, status = "Détruit" WHERE id = ? ');
-      $updateDestructionDate->execute(array($destruction_date, $id)) or die('Erreur SQL !'.$sql.'<br />');
+    $updateDestructionDate = $bddmat->prepare('UPDATE raw_material
+                                               SET destruction_date = :destructionDate, status = "Détruit"
+                                               WHERE id = :matId');
+    $updateDestructionDate->bindValue(':destructionDate', $destruction_date);
+    $updateDestructionDate->bindValue(':matId', $id, PDO::PARAM_INT);
+    $updateDestructionDate->execute();
     $updateDestructionDate->closeCursor();
 
     // Check if another lot is already open and ask if the user want to close it.
-      $selectAlreadyOpened = $bddmat->prepare('SELECT * FROM raw_material WHERE mat_name = ? AND opening_date IS NOT null AND destruction_date IS null');
-        $selectAlreadyOpened->execute(array($mat_name)) or die('Erreur SQL !'.$sql.'<br />');
+      $selectAlreadyOpened = $bddmat->prepare('SELECT * FROM raw_material
+                                               WHERE mat_name = :matName
+                                                 AND opening_date IS NOT null
+                                                 AND destruction_date IS null');
+      $selectAlreadyOpened->bindValue(':matName', $mat_name);
+      $selectAlreadyOpened->execute();
+      $openExist = count($selectAlreadyOpened->fetchAll());
       $selectAlreadyOpened->closeCursor();
-
-      $openExist = $selectAlreadyOpened->rowCount();
 
       if($openExist > 1) {
         ?>
@@ -132,6 +159,7 @@ include_once('../Connexion/cookieconnect.php');
             <footer>
               <div id="footerText">
                 <form method="post" action="close_a_raw_material.php">
+                  <input type="hidden" value="<?php echo($openedSolution);?>" name="solution"/>
                   <input type="hidden" value="<?php echo($mat_name);?>" name="mat_name"/>
                   <input type="hidden" value="<?php echo($id);?>" name="id"/>
                   <div class="modal_buttons">
@@ -164,12 +192,10 @@ include_once('../Connexion/cookieconnect.php');
           </div>
         </div>
         <?php
-        header('Location: open_a_raw_material.php');
       }
   }
   ?>
 
 <!-- Scripts -->
-  <script src="../assets/js/jquery.min.js"></script>
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/darkmode.js"></script>

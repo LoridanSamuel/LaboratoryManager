@@ -124,7 +124,6 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
     ?>
 
 <!-- Scripts -->
-  <!-- <script src="../assets/js/jquery.min.js"></script> -->
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/darkmode.js"></script>
   <script src="../assets/js/javascript functions/print_a_label.js"></script>
