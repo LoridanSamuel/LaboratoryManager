@@ -27,7 +27,10 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
         break;
     }
 
-    $selectMaterial = $bddmat -> query('SELECT * FROM '.$type.' WHERE verification_date IS null AND destruction_date IS null');
+    $selectMaterial = $bddmat -> query("SELECT *
+                                        FROM {$type}
+                                        WHERE verification_date IS null
+                                          AND destruction_date IS null");
       while($material = $selectMaterial -> fetch()) {
         $solutionInfo = $material[$material_name].' à '.$material['concentration'].' dans '.$material['solvent'].' '.$brackets.' préparé le '.$material['preparation_date'].' par '.$material['maker'];
         $solhtml .= '<option value = "'.$solutionInfo.'">'.$solutionInfo.'</option>';
@@ -35,7 +38,10 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
     $selectMaterial -> closeCursor();
   }
 
-  $selectScale = $bddmat -> query('SELECT * FROM scale WHERE verification_date IS null AND destruction_date IS null ');
+  $selectScale = $bddmat -> query('SELECT *
+                                   FROM scale
+                                   WHERE verification_date IS null
+                                     AND destruction_date IS null ');
     while ($scale = $selectScale -> fetch()) {
       $solutionInfo = $scale['sc_name'].' dans '.$scale['solvent'].' (Etalon) préparé le '.$scale['preparation_date'].' par '.$scale['maker'];
       $solhtml .= '<option value = "'.$solutionInfo.'">'. $solutionInfo.'</option>';
@@ -92,18 +98,19 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
 }
 
 if(isset($_SESSION['id'],$_POST['formChecking']) AND $_SESSION['id'] > 0) {
-  $typeOfMaterial = htmlspecialchars($_POST['typeOfMaterial']);
-  $matName = htmlspecialchars($_POST['matName']);
-  $concentration = htmlspecialchars($_POST['concentration']);
-  $solvent = htmlspecialchars($_POST['solvent']);
-  $preparation_date = htmlspecialchars($_POST['preparation_date']);
-  $maker = htmlspecialchars($_POST['maker']);
-  $verification_date = htmlspecialchars($_POST['verification_date']);
+
+  $solution = htmlspecialchars($_POST['solution']);
+  $solution = str_replace('&quot;', '"', $solution);
+  $solution = json_decode($_POST['solution']);
+  $verificationDate = htmlspecialchars($_POST['verification_date']);
 
   // $checker from session table
     $sessionid = htmlspecialchars($_SESSION['id']);
-    $selectChecker = $bdd->prepare('SELECT pseudo FROM membres WHERE id = ?');
-    $selectChecker->execute(array($sessionid));
+    $selectChecker = $bdd->prepare('SELECT pseudo
+                                    FROM membres
+                                    WHERE id = :sessionid');
+    $selectChecker->bindValue('sessionid', $sessionid, PDO::PARAM_INT);
+    $selectChecker->execute();
       while ($result = $selectChecker->fetch()) {
         $checker = $result['pseudo'];
       }
@@ -114,6 +121,12 @@ if(isset($_SESSION['id'],$_POST['formChecking']) AND $_SESSION['id'] > 0) {
     foreach($words as $w) {
       $checker .= $w[0];
     }
+
+    $solution->checker = $checker;
+    $solution->verificationDate = $verificationDate;
+
+    $solution = json_encode($solution);
+    $solution = htmlspecialchars($solution);
 
   ?>
   <link rel="stylesheet" href="../assets/css/prefixed/main.css" />
@@ -129,14 +142,7 @@ if(isset($_SESSION['id'],$_POST['formChecking']) AND $_SESSION['id'] > 0) {
       <footer>
         <div id="footerText">
           <form method="post" action="">
-            <input type="hidden" value="<?php echo($typeOfMaterial);?>" name="typeOfMaterial"/>
-            <input type="hidden" value="<?php echo($matName);?>" name="matName"/>
-            <input type="hidden" value="<?php echo($concentration);?>" name="concentration"/>
-            <input type="hidden" value="<?php echo($solvent);?>" name="solvent"/>
-            <input type="hidden" value="<?php echo($preparation_date);?>" name="preparation_date"/>
-            <input type="hidden" value="<?php echo($maker);?>" name="maker"/>
-            <input type="hidden" value="<?php echo($verification_date);?>" name="verification_date"/>
-            <input type="hidden" value="<?php echo($checker);?>" name="checker"/>
+            <input type="hidden" value='<?php echo($solution);?>' name="solution"/>
             <div class="modal_buttons">
               <button type="submit" name="checkformConfirmed" class="btn">Oui</button>
               <a href="check_a_solution.php" class="btn">Non</a>
@@ -151,37 +157,43 @@ if(isset($_SESSION['id'],$_POST['formChecking']) AND $_SESSION['id'] > 0) {
 
 // Return value to database
   if(isset($_SESSION['id'],$_POST['checkformConfirmed']) AND $_SESSION['id'] > 0){
-    $typeOfMaterial = htmlspecialchars($_POST['typeOfMaterial']);
-    $matName = htmlspecialchars($_POST['matName']);
-    $concentration = htmlspecialchars($_POST['concentration']);
-    $solvent = htmlspecialchars($_POST['solvent']);
-    $preparation_date = htmlspecialchars($_POST['preparation_date']);
-    $maker = htmlspecialchars($_POST['maker']);
-    $verification_date = htmlspecialchars($_POST['verification_date']);
-    $checker = htmlspecialchars($_POST['checker']);
 
-    switch ($typeOfMaterial) {
+    $solution = htmlspecialchars($_POST['solution']);
+    $solution = str_replace('&quot;', '"', $solution);
+    $solution = json_decode($_POST['solution']);
+
+    $dataBaseName = $solution->typeOfMaterial;
+
+    switch ($dataBaseName) {
       case "reagent":
-        $sol_name = "reag_name";
+        $solName = "reag_name";
         break;
       case "indicator":
-        $sol_name = "ind_name";
+        $solName = "ind_name";
         break;
       case "standard":
-        $sol_name = "std_name";
+        $solName = "std_name";
         break;
       case "scale":
-        $concentration = "-";
-        $sol_name = "sc_name";
+        $solution['concentration'] = "-";
+        $solName = "sc_name";
     }
 
-    $updateSolutionChecked = $bddmat->prepare('UPDATE ' . $typeOfMaterial . ' SET verification_date = ?, checker = ? WHERE ' . $sol_name . ' = ? 
-                                                                                                                       AND concentration = ? 
-                                                                                                                       AND solvent = ? 
-                                                                                                                       AND preparation_date = ? 
-                                                                                                                       AND maker = ? 
-                                                                                                                       AND destruction_date IS null');
-    $updateSolutionChecked->execute(array($verification_date, $checker, $matName, $concentration, $solvent, $preparation_date, $maker)) or die('Erreur SQL !'.$sql.'<br />');
+    $updateSolutionChecked = $bddmat->prepare("UPDATE {$dataBaseName} SET verification_date = :verificationDate, checker = :checker
+                                                                      WHERE {$solName} = :solutionName
+                                                                        AND concentration = :concentration
+                                                                        AND solvent = :solvent
+                                                                        AND preparation_date = :preparationDate
+                                                                        AND maker = :maker
+                                                                        AND destruction_date IS null");
+    $updateSolutionChecked->bindValue(':verificationDate', $solution->verificationDate);
+    $updateSolutionChecked->bindValue(':checker', $solution->checker);
+    $updateSolutionChecked->bindValue(':solutionName', $solution->matName);
+    $updateSolutionChecked->bindValue(':concentration', $solution->concentration);
+    $updateSolutionChecked->bindValue(':solvent', $solution->solvent);
+    $updateSolutionChecked->bindValue(':preparationDate', $solution->preparationDate);
+    $updateSolutionChecked->bindValue(':maker', $solution->maker);
+    $updateSolutionChecked->execute();
     $updateSolutionChecked->closeCursor();
 
     ?>

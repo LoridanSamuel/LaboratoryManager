@@ -41,7 +41,9 @@ if(isset($_SESSION['id'],$_POST['typeOfDatabase']) AND $_SESSION['id'] > 0) {
   $title = "<h2>Consultation de la base de données ".$titleCompletion."</h2>";
   $tableBody = '';
   $status = '';
-  $selectData = $bddmat->query('SELECT * FROM '.$typeOfDatabase.' ORDER BY '.$solNumber);
+  $selectData = $bddmat->query("SELECT *
+                                FROM {$typeOfDatabase}
+                                ORDER BY {$solNumber}");
 
   if($typeOfDatabase === 'raw_material') {
     $tableHeader = "<th>N°</th>

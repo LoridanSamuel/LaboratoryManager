@@ -11,7 +11,12 @@ include_once('../Connexion/cookieconnect.php');
 
     $namehtml = "";
 
-    $selectRM = $bddmat->query('SELECT DISTINCT mat_name FROM raw_material WHERE status != "Détruit" AND status != "Non ouvert" AND status !="OK" ORDER BY mat_name');
+    $selectRM = $bddmat->query('SELECT DISTINCT mat_name
+                                FROM raw_material
+                                WHERE status != "Détruit" 
+                                  AND status != "Non ouvert"
+                                  AND status !="OK"
+                                  ORDER BY mat_name');
       while ($RM = $selectRM->fetch()) {
         $namehtml .= '<option value="'.$RM['mat_name'].'">'.$RM['mat_name'].'</option>';
       }
@@ -48,7 +53,7 @@ include_once('../Connexion/cookieconnect.php');
                   <form method="POST" class="form-purity" action="">
                     <select name="name" id="name" onchange="request(this);" required>
                       <option value="none" disabled selected>Selection</option>'
-                      <?php echo $namehtml ?>
+                      <?php echo $namehtml;?>
                     </select>
                     <table>
                       <thead id="tableHeader">
@@ -68,13 +73,18 @@ include_once('../Connexion/cookieconnect.php');
 
 // purity after retest request
   if(isset($_SESSION['id'],$_POST['formPurity']) AND $_SESSION['id'] > 0){
-    $mat_name = htmlspecialchars($_POST['name']);
-    $id = htmlspecialchars($_POST['id']);
-    $retesting_date = htmlspecialchars($_POST['retesting_date']);
-    $purity = htmlspecialchars($_POST['purity']);
-    $purity_retested = htmlspecialchars($_POST['purity_retested']);
 
-    echo(substr($purity, 0, 4));
+    $solution = json2php($_POST['solution']);
+
+    $mat_name = htmlspecialchars($solution->mat_name);
+    $id = htmlspecialchars($solution->id);
+    $purity = htmlspecialchars($solution->purity);
+    $purity_retested = htmlspecialchars($solution->purity_retested);
+    $retesting_date = htmlspecialchars($_POST['retesting_date']);
+
+    $solution->retesting_date = $retesting_date;
+
+    $solution = php2json($solution);
 
     if(substr($purity, 0, 4) == "&gt;") {
       $particle = "";
@@ -82,13 +92,13 @@ include_once('../Connexion/cookieconnect.php');
       $particle = "de ";
     }
 
-    if($purity <> "null" AND $purity_retested <> "null") {
+    if($purity <> null AND $purity_retested <> null) {
       $sumup = "<p>La pureté déclarée sur le COA fournisseur de ce produit est " .$particle . $purity. " et au moins une valeur de retest a été renseignée pour ce produit (" .$purity_retested. ")</p>";
-    } else if($purity <> "null" AND $purity_retested == "null") {
+    } else if($purity <> null AND $purity_retested == null) {
       $sumup = "<p>La pureté déclarée sur le COA fournisseur de ce produit est " .$particle . $purity. ".</p>";
-    } else if($purity == "null" AND $purity_retested <> "null") {
+    } else if($purity == null AND $purity_retested <> null) {
       $sumup = "<p>Au moins une valeur de retest a été renseignée pour ce produit (" .$purity_retested. ")</p>";
-    } else if($purity == "null" AND $purity_retested == "null") {
+    } else if($purity == null AND $purity_retested == null) {
       $sumup = "<p>Aucune valeur de pureté n'a été renseignée pour ce produit.</p>";
     }
 
@@ -109,9 +119,7 @@ include_once('../Connexion/cookieconnect.php');
             <form method="post" action="">
               <div>
                 <input type="text" name="purity_retested" id="purity_retest"/>
-                <input type="hidden" value="<?php echo($id)?>" name="id"/>
-                <input type="hidden" value="<?php echo($retesting_date)?>" name="retesting_date"/>
-                <input type="hidden" value="<?php echo($purity)?>" name="purity"/>
+                <input type="hidden" value=<?php echo($solution);?> name="solution"/>
               </div>
               <div>
                 <button type="submit" name="formDelay" class="btn">Terminer</button>
@@ -126,12 +134,18 @@ include_once('../Connexion/cookieconnect.php');
 
 // Database insertion
   if(isset($_SESSION['id'],$_POST['formDelay']) AND $_SESSION['id'] > 0){
-    $id = htmlspecialchars($_POST['id']);
-    $retesting_date = htmlspecialchars($_POST['retesting_date']);
+
+    $solution = json2php($_POST['solution']);
+
+    $id = htmlspecialchars($solution->id);
+    $purity = htmlspecialchars($solution->purity);
+    $purity_retested = htmlspecialchars($_POST['purity_retested']);
+    $retesting_date = htmlspecialchars($solution->retesting_date);
     $retesting_dateTimestamp = strtotime($retesting_date);
     $extended_date = date('Y-m-d', strtotime('+ 2 year', $retesting_dateTimestamp));
-    $purity_retested = htmlspecialchars($_POST['purity_retested']);
-    $purity = htmlspecialchars($_POST['purity']);
+    $solution->extended_date = $extended_date;
+
+    $solution = php2json($solution);
 
     if($purity_retested == null){
       ?>
@@ -148,9 +162,7 @@ include_once('../Connexion/cookieconnect.php');
           <footer>
             <div id="footerText">
               <form method="post" action="">
-                <input type="hidden" value="<?php echo($id)?>" name="id"/>
-                <input type="hidden" value="<?php echo($retesting_date)?>" name="retesting_date"/>
-                <input type="hidden" value="<?php echo($extended_date)?>" name="extended_date"/>
+                <input type="hidden" value=<?php echo($solution);?> name="solution"/>
                 <div class="modal_buttons">
                   <button type="submit" name="formDelayWithoutRetest" class="btn">Oui</button>
                   <a href="delay.php" class="btn">Non</a>
@@ -180,11 +192,19 @@ include_once('../Connexion/cookieconnect.php');
         }
 
         if(($sign == "yes" AND $purity_retested_number <= $purity) OR ($sign <> "yes" AND $purity_retested_number <= $purity * 0.95) OR ($sign == '' AND $purity_retested_number >= $purity * 1.05)) {
-          echo("<div class='alert'>La pureté renseignée n'est pas conforme à la donnée fournisseur.</div>");
+          echo "<script type='text/javascript'>alert('Pureté non conforme à la donnée fournisseur.');</script>";
         } else {
 
-          $updateDelay = $bddmat->prepare('UPDATE raw_material SET retesting_date = ?, extended_date = ? , purity_retested = ? WHERE id = ? ');
-            $updateDelay->execute(array($retesting_date, $extended_date, $purity_retested, $id)) or die('Erreur SQL !'.$sql.'<br />');
+          $updateDelay = $bddmat->prepare('UPDATE raw_material
+                                           SET retesting_date = :retestingDate,
+                                               extended_date = :extendedDate ,
+                                               purity_retested = :purityRetested
+                                           WHERE id = :matId ');
+          $updateDelay->bindValue(':retestingDate', $retesting_date);
+          $updateDelay->bindValue(':extendedDate', $extended_date);
+          $updateDelay->bindValue(':purityRetested', $purity_retested);
+          $updateDelay->bindValue(':matId', $id);
+          $updateDelay->execute();
           $updateDelay->closeCursor();
 
           ?>
@@ -222,10 +242,7 @@ include_once('../Connexion/cookieconnect.php');
             <footer>
               <div id="footerText">
                 <form method="post" action="">
-                  <input type="hidden" value="<?php echo($id)?>" name="id"/>
-                  <input type="hidden" value="<?php echo($retesting_date)?>" name="retesting_date"/>
-                  <input type="hidden" value="<?php echo($extended_date)?>" name="extended_date"/>
-                  <input type="hidden" value="<?php echo($purity_retested)?>" name="purity_retested"/>
+                  <input type="hidden" value=<?php echo($solution);?> name="solution"/>
                   <div class="modal_buttons">
                     <button type="submit" name="formDelayWithoutRetest" class="btn">Oui</button>
                     <a href="delay.php" class="btn">Non</a>
@@ -242,12 +259,21 @@ include_once('../Connexion/cookieconnect.php');
 
 // Return value to database without retest value
   if(isset($_SESSION['id'],$_POST['formDelayWithoutRetest']) AND $_SESSION['id'] > 0){
-    $id = htmlspecialchars($_POST['id']);
-    $retesting_date = htmlspecialchars($_POST['retesting_date']);
-    $extended_date = htmlspecialchars($_POST['extended_date']);
 
-    $updateDelay = $bddmat->prepare('UPDATE raw_material SET retesting_date = ?, extended_date = ?  WHERE id = ? ');
-    $updateDelay->execute(array($retesting_date, $extended_date, $id)) or die('Erreur SQL !'.$sql.'<br />');
+    $solution = json2php($_POST['solution']);
+
+    $id = htmlspecialchars($solution->id);
+    $retesting_date = htmlspecialchars($solution->retesting_date);
+    $extended_date = htmlspecialchars($solution->extended_date);
+
+    $updateDelay = $bddmat->prepare('UPDATE raw_material
+                                     SET retesting_date = :retestingDate,
+                                         extended_date = :extendedDate
+                                     WHERE id = :matId');
+    $updateDelay->bindValue(':retestingDate', $retesting_date);
+    $updateDelay->bindValue(':extendedDate', $extended_date);
+    $updateDelay->bindValue(':matId', $id);
+    $updateDelay->execute();
     $updateDelay->closeCursor();
     ?>
     <link rel="stylesheet" href="../assets/css/prefixed/main.css" />
@@ -269,10 +295,24 @@ include_once('../Connexion/cookieconnect.php');
     </div>
     <?php
   }
+
+  function json2php($json) {
+    $json = str_replace('&quot;', '"', $json);
+    $json = str_replace('&gt;=', '>=', $json);
+    $json = str_replace('/b', ' ', $json);
+    return json_decode($json);
+  }
+
+  function php2json($php) {
+    $json = json_encode($php);
+    $json = str_replace('"', '&quot;', $json);
+    $json = str_replace('>=', '&gt;=', $json);
+    $json = str_replace(' ', '/b', $json);
+    return $json;
+  }
   ?>
 
 <!-- Scripts -->
-  <!-- <script src="../assets/js/jquery.min.js"></script> -->
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/darkmode.js"></script>
   <script src="../assets/js/javascript functions/delay.js"></script>

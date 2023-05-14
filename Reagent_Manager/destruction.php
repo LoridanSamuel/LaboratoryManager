@@ -29,7 +29,6 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
             
             <?php include('../header.php'); ?>
 
-
             <section class='section'>
               <div class='section--title'>
                 <h2>Destruction d'un produit</h2>
@@ -86,8 +85,12 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
     $id = htmlspecialchars($_POST['id']);
     $destructionDate = htmlspecialchars($_POST['destruction_date']);
 
-    $updateDestructed = $bddmat->prepare("UPDATE {$typeOfMaterial} SET destruction_date = ?, status = 'Détruit' WHERE id = ? ");
-    $updateDestructed->execute(array($destructionDate, $id)) or die('Erreur SQL !'.$sql.'<br />');
+    $updateDestructed = $bddmat->prepare("UPDATE {$typeOfMaterial}
+                                          SET destruction_date = :destructionDate,
+                                              status = 'Détruit'
+                                          WHERE id = ? ");
+    $updateDestructed->bindValue(':destructionDate', $destructionDate);
+    $updateDestructed->execute();
 
     $updateDestructed->closeCursor();
     ?>
@@ -112,7 +115,6 @@ if(isset($_SESSION['id']) AND $_SESSION['id'] > 0) {
   ?>
 
 <!-- Scripts -->
-  <!-- <script src="../assets/js/jquery.min.js"></script> -->
   <script src="../assets/js/nav.js"></script>
   <script src="../assets/js/darkmode.js"></script>
   <script src="../assets/js/javascript functions/destruction.js"></script>
